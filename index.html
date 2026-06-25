@@ -2117,18 +2117,20 @@ async function uploadToSheets(entry) {
   if (!url) return;
   setSyncStatus('syncing');
   try {
-    // Apps Script Web Apps only allow cross-origin reads via doGet.
-    // We send data as a JSON string in a query parameter — doGet parses it
-    // and writes to the sheet. Receipt/invoice base64 is stripped here
-    // (too large for a URL) and uploaded separately if needed.
+    // POST with Content-Type: text/plain bypasses CORS preflight on Apps Script.
+    // Apps Script reads the raw body via e.postData.contents — no URL encoding,
+    // no & splitting, no double-decode. This is the most reliable pattern.
     const payload = {
-      action:   'add',
-      type:     entry.type,
-      id:       entry.id,
-      date:     entry.date,
-      amount:   entry.amount,
-      currency: entry.currency,
-      notes:    entry.notes || '',
+      action:       'add',
+      type:         entry.type,
+      id:           entry.id,
+      date:         entry.date,
+      amount:       entry.amount,
+      currency:     entry.currency,
+      notes:        entry.notes || '',
+      scheduleC:    entry.scheduleC || '',
+      miles:        entry.miles || 0,
+      sqft:         entry.sqft  || 0,
     };
 
     if (entry.type === 'expense') {
@@ -2143,16 +2145,16 @@ async function uploadToSheets(entry) {
       payload.status  = entry.status;
     }
 
-    // Use GET with encoded payload — works reliably with Apps Script CORS
-    const getUrl = url + '?payload=' + encodeURIComponent(JSON.stringify(payload));
-    const resp = await fetch(getUrl, { method: 'GET', mode: 'cors' });
-    const json = await resp.json().catch(() => ({}));
-    if (json.status === 'ok') {
-      setSyncStatus('online');
-      toast('Synced to Google Sheets ✓', 'success');
-    } else {
-      throw new Error(json.message || 'Upload failed');
-    }
+    const resp = await fetch(url, {
+      method:  'POST',
+      mode:    'no-cors',           // no-cors = fire-and-forget; Apps Script still runs doPost
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(payload),
+    });
+    // no-cors gives opaque response — we can't read it, but the write still happens.
+    // We optimistically mark as synced and show toast.
+    setSyncStatus('online');
+    toast('Synced to Google Sheets ✓', 'success');
   } catch(e) {
     setSyncStatus('offline');
     console.warn('Sheets upload failed:', e);
