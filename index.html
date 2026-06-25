@@ -313,21 +313,52 @@ img{max-width:100%;display:block}
    ONBOARDING
 ═══════════════════════════════════════════════ */
 #onboarding{background:var(--slate);z-index:1000}
-.onboard-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.onboard-slides{display:flex;flex:1;overflow:hidden}
+.onboard-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.onboard-slides-viewport{flex:1;overflow:hidden;position:relative;min-height:0}
+/* 3-slide horizontal strip: container is 300% wide, each child 1/3 */
+.onboard-slides{
+  display:flex;flex-direction:row;
+  width:300%;height:100%;
+  transition:transform .42s cubic-bezier(.22,.68,0,1.2);
+  will-change:transform;
+}
 .onboard-slide{
-  min-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 32px;gap:24px;text-align:center;transition:transform .4s cubic-bezier(.22,.68,0,1.2);
+  width:calc(100% / 3);flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 28px 16px;gap:0;text-align:center;overflow:hidden;
 }
 .onboard-visual{
-  width:160px;height:160px;border-radius:var(--radius-lg);display:flex;align-items:center;
-  justify-content:center;font-size:72px;margin-bottom:8px;
-  background:linear-gradient(145deg,var(--slate-3),var(--slate-2));border:1px solid var(--border-hi);
+  width:148px;height:148px;border-radius:28px;display:flex;align-items:center;
+  justify-content:center;font-size:64px;margin-bottom:20px;flex-shrink:0;
+  background:linear-gradient(145deg,var(--slate-3),var(--slate-2));
+  border:1px solid var(--border-hi);
+  box-shadow:0 8px 40px rgba(0,0,0,0.3),0 0 0 1px rgba(212,168,67,0.08);
 }
-.onboard-dots{display:flex;gap:8px;justify-content:center;padding-bottom:8px}
+.onboard-slide-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:4px 14px;
+  background:rgba(212,168,67,0.12);border:1px solid rgba(212,168,67,0.25);
+  border-radius:20px;font-family:var(--font-display);font-size:10px;font-weight:600;
+  color:var(--gold);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px;
+}
+.onboard-slide-title{
+  font-family:var(--font-display);font-size:clamp(22px,5.5vw,30px);font-weight:700;
+  line-height:1.15;letter-spacing:-0.02em;color:var(--off-white);margin-bottom:10px;
+}
+.onboard-slide-desc{
+  font-size:14px;line-height:1.65;color:var(--muted);max-width:290px;margin-bottom:18px;
+}
+.onboard-feature-list{display:flex;flex-direction:column;gap:8px;width:100%}
+.onboard-feature-row{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 13px;
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left;
+}
+.onboard-feature-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.onboard-feature-label{font-size:13px;font-weight:600;color:var(--off-white)}
+.onboard-feature-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.onboard-dots{display:flex;gap:8px;justify-content:center;padding:14px 0 6px;flex-shrink:0}
 .onboard-dot{width:6px;height:6px;border-radius:3px;background:var(--slate-4);transition:all .3s}
-.onboard-dot.active{width:20px;background:var(--gold)}
-.onboard-actions{display:flex;flex-direction:column;gap:10px;padding:16px 24px 32px;flex-shrink:0}
+.onboard-dot.active{width:22px;background:var(--gold)}
+.onboard-actions{display:flex;flex-direction:column;gap:10px;padding:10px 24px 32px;flex-shrink:0}
 
 /* ═══════════════════════════════════════════════
    PAYWALL
@@ -500,10 +531,87 @@ img{max-width:100%;display:block}
   background:var(--coral);color:#fff;border-radius:var(--radius-sm);
   padding:8px 16px;font-family:var(--font-display);font-size:13px;font-weight:600;
 }
+
+/* ═══════════════════════════════════════════════
+   SPLASH SCREEN
+═══════════════════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--slate);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .5s ease, transform .5s ease;
+}
+#splash.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+.splash-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%, rgba(212,168,67,0.13) 0%, transparent 70%);
+  pointer-events:none;
+}
+.splash-logo-wrap{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:100px;height:120px;margin-bottom:28px;
+}
+.splash-logo-wrap svg{filter:drop-shadow(0 0 24px rgba(212,168,67,0.35))}
+.splash-wordmark{
+  font-family:var(--font-display);font-size:30px;font-weight:700;
+  letter-spacing:-0.03em;color:var(--off-white);margin-bottom:6px;
+  opacity:0;animation:splashFadeUp .55s .35s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+.splash-tagline{
+  font-family:var(--font-body);font-size:14px;color:var(--muted);letter-spacing:0.01em;
+  opacity:0;animation:splashFadeUp .5s .55s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+.splash-bar-wrap{
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  width:120px;opacity:0;animation:splashFadeUp .4s .75s ease forwards;
+}
+.splash-bar-track{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.splash-bar-fill{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold-glow));
+  border-radius:2px;animation:splashBar 1.1s .8s cubic-bezier(.4,0,.2,1) forwards;
+}
+.splash-version{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-display);font-size:11px;color:var(--slate-4);letter-spacing:0.06em;
+  white-space:nowrap;opacity:0;animation:splashFadeUp .4s .75s ease forwards;
+}
+.splash-receipt-path{
+  stroke-dasharray:260;stroke-dashoffset:260;
+  animation:drawPath .7s .1s cubic-bezier(.4,0,.2,1) forwards;
+}
+.splash-receipt-lines{opacity:0;animation:splashFadeUp .4s .6s ease forwards}
+@keyframes splashFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splashBar{from{width:0%}to{width:100%}}
+@keyframes drawPath{to{stroke-dashoffset:0}}
 </style>
 </head>
 <body>
 <div id="app">
+<!-- ══════════════════════════════════
+     SPLASH SCREEN
+══════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-glow"></div>
+  <div class="splash-logo-wrap">
+    <svg width="100" height="120" viewBox="0 0 80 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="splash-receipt-path" d="M10 0h60a4 4 0 014 4v76l-10-7-10 7-10-7-10 7-10-7-10 7V4a4 4 0 014-4z" fill="#F7F8FA" stroke="none"/>
+      <path class="splash-receipt-path" d="M0 90 Q10 82 20 90 Q30 98 40 90 Q50 82 60 90 Q70 98 80 90" stroke="#D4A843" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <g class="splash-receipt-lines">
+        <line x1="22" y1="24" x2="58" y2="24" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="22" y1="36" x2="58" y2="36" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="22" y1="48" x2="46" y2="48" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="22" y1="60" x2="38" y2="60" stroke="#D4A843" stroke-width="1.8" stroke-linecap="round" opacity="0.6"/>
+      </g>
+    </svg>
+  </div>
+  <div class="splash-wordmark">Ledger Pro</div>
+  <div class="splash-tagline">Business finance, simplified</div>
+  <div class="splash-bar-wrap">
+    <div class="splash-bar-track"><div class="splash-bar-fill"></div></div>
+  </div>
+  <div class="splash-version">v1.0.0</div>
+</div>
+
 <div id="screen-stack" style="position:fixed;inset:0;overflow:hidden">
 
 <!-- ══════════════════════════════════
@@ -524,31 +632,72 @@ img{max-width:100%;display:block}
       </div>
       <button class="btn-ghost" id="skip-onboard" style="font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--muted)">Skip</button>
     </div>
+    <div class="onboard-slides-viewport">
     <div class="onboard-slides" id="onboard-slides">
       <!-- Slide 1 -->
       <div class="onboard-slide">
         <div class="onboard-visual">📊</div>
-        <div>
-          <div class="t-hero" id="ob-title-0">Track Every Dollar</div>
-          <div class="t-body mt-12" id="ob-desc-0">Log expenses and income in seconds. Built for freelancers and small businesses who mean business.</div>
+        <div class="onboard-slide-badge">Finance Tracker</div>
+        <div class="onboard-slide-title" id="ob-title-0">Track Every Dollar</div>
+        <div class="onboard-slide-desc" id="ob-desc-0">Log expenses and income in seconds. Built for freelancers and small businesses who mean business.</div>
+        <div class="onboard-feature-list">
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">💸</span>
+            <div><div class="onboard-feature-label">Expense Tracking</div><div class="onboard-feature-sub">Log by vendor, category & payment method</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">💰</span>
+            <div><div class="onboard-feature-label">Income & Invoices</div><div class="onboard-feature-sub">Track paid, unpaid & overdue invoices</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">🏷️</span>
+            <div><div class="onboard-feature-label">Tax Deductible Tags</div><div class="onboard-feature-sub">Mark expenses for tax time automatically</div></div>
+          </div>
         </div>
       </div>
       <!-- Slide 2 -->
       <div class="onboard-slide">
         <div class="onboard-visual">📸</div>
-        <div>
-          <div class="t-hero" id="ob-title-1">Capture Receipts</div>
-          <div class="t-body mt-12" id="ob-desc-1">Snap a photo of your receipt and attach it directly to your expense. Stored securely in Google Drive.</div>
+        <div class="onboard-slide-badge">Receipt Capture</div>
+        <div class="onboard-slide-title" id="ob-title-1">Capture Receipts</div>
+        <div class="onboard-slide-desc" id="ob-desc-1">Snap a photo of any receipt or invoice and attach it directly to the entry — stored securely in Google Drive.</div>
+        <div class="onboard-feature-list">
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">📷</span>
+            <div><div class="onboard-feature-label">Camera & Photo Library</div><div class="onboard-feature-sub">JPG, PNG or PDF up to 10 MB</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">☁️</span>
+            <div><div class="onboard-feature-label">Google Drive Backup</div><div class="onboard-feature-sub">Receipts saved to your own Drive folder</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">📄</span>
+            <div><div class="onboard-feature-label">Invoice Attachments</div><div class="onboard-feature-sub">Attach PDF invoices to income entries</div></div>
+          </div>
         </div>
       </div>
       <!-- Slide 3 -->
       <div class="onboard-slide">
         <div class="onboard-visual">🧾</div>
-        <div>
-          <div class="t-hero" id="ob-title-2">Export Anytime</div>
-          <div class="t-body mt-12" id="ob-desc-2">Download CSV, copy TSV, or sync with Google Sheets — your data, your way, tax-ready in seconds.</div>
+        <div class="onboard-slide-badge">Export & Sync</div>
+        <div class="onboard-slide-title" id="ob-title-2">Your Data, Your Way</div>
+        <div class="onboard-slide-desc" id="ob-desc-2">Export CSV, copy TSV, or sync live with Google Sheets — tax-ready reports in seconds, in 6 languages.</div>
+        <div class="onboard-feature-list">
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">📊</span>
+            <div><div class="onboard-feature-label">Google Sheets Sync</div><div class="onboard-feature-sub">Live two-way sync with your spreadsheet</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">📥</span>
+            <div><div class="onboard-feature-label">CSV & JSON Export</div><div class="onboard-feature-sub">Download for any accounting tool</div></div>
+          </div>
+          <div class="onboard-feature-row">
+            <span class="onboard-feature-icon">🌐</span>
+            <div><div class="onboard-feature-label">6 Languages</div><div class="onboard-feature-sub">English, Spanish, French, Farsi, German, Portuguese</div></div>
+          </div>
         </div>
       </div>
+    </div>
     </div>
     <div class="onboard-dots" id="onboard-dots">
       <div class="onboard-dot active"></div>
@@ -1538,7 +1687,8 @@ function applyLanguage(lang) {
     const el = document.getElementById(id);
     if (el) el.textContent = t[id];
   });
-  document.getElementById('set-lang-val').textContent = t.name;
+  const langValEl = document.getElementById('set-lang-val');
+  if (langValEl) langValEl.textContent = t.name;
   save();
 }
 
@@ -1641,11 +1791,12 @@ const SLIDE_COUNT = 3;
 function goToSlide(n) {
   obSlide = Math.max(0, Math.min(n, SLIDE_COUNT - 1));
   const slides = document.querySelector('#onboard-slides');
-  slides.style.transform = `translateX(-${obSlide * 100}%)`;
-  slides.style.transition = 'transform .4s cubic-bezier(.22,.68,0,1.2)';
+  // Container is 300% wide; each slide is 1/3 of that = 1/3 of 300% = 100vw.
+  // Moving to slide N means shifting by N × (100% / SLIDE_COUNT) of the container.
+  slides.style.transform = `translateX(-${obSlide * (100 / SLIDE_COUNT)}%)`;
   document.querySelectorAll('.onboard-dot').forEach((d,i) => d.classList.toggle('active', i === obSlide));
   const nextBtn = document.getElementById('onboard-next');
-  nextBtn.textContent = obSlide === SLIDE_COUNT - 1 ? 'Get Started' : 'Next';
+  nextBtn.textContent = obSlide === SLIDE_COUNT - 1 ? 'Get Started ✦' : 'Next →';
 }
 
 document.getElementById('onboard-next').addEventListener('click', () => {
@@ -2085,9 +2236,27 @@ function showEntryDetail(entry) {
   openModal('modal-entry');
 }
 
+// Delete a row from Google Sheets by entry id and type
+async function deleteFromSheets(entry) {
+  const url = STATE.settings.sheetsUrl;
+  if (!url) return;
+  setSyncStatus('syncing');
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', type: entry.type, id: entry.id })
+    });
+    setSyncStatus('online');
+  } catch(e) {
+    setSyncStatus('offline');
+  }
+}
+
 function confirmDelete(entry) {
   document.getElementById('confirm-title').textContent = 'Delete Entry?';
-  document.getElementById('confirm-msg').textContent = `This will permanently delete "${entry.vendor || entry.client || 'this entry'}".`;
+  document.getElementById('confirm-msg').textContent = `This will permanently delete "${entry.vendor || entry.client || 'this entry'}" and remove it from Google Sheets.`;
   const okBtn = document.getElementById('confirm-ok');
   const cancelBtn = document.getElementById('confirm-cancel');
   const handler = () => {
@@ -2098,6 +2267,7 @@ function confirmDelete(entry) {
     renderEntries();
     renderDashboard();
     toast('Entry deleted', 'info');
+    if (STATE.settings.sheetsUrl) deleteFromSheets(entry);
     okBtn.removeEventListener('click', handler);
   };
   okBtn.addEventListener('click', handler);
@@ -2349,6 +2519,15 @@ window.addEventListener('offline', () => setSyncStatus('offline'));
 function init() {
   load();
   applyLanguage(STATE.settings.lang);
+
+  // Dismiss splash after animations complete (~2s)
+  const splash = document.getElementById('splash');
+  if (splash) {
+    setTimeout(() => {
+      splash.classList.add('fade-out');
+      setTimeout(() => splash.remove(), 520);
+    }, 2000);
+  }
 
   if (STATE.settings.sheetsUrl) {
     document.getElementById('set-sheets-sub').textContent = 'URL configured ✅';
