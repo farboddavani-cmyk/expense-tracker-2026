@@ -1,10 +1,106 @@
-# 🧾 Ledger Pro — Business Finance Tracker
+[README.md](https://github.com/user-attachments/files/29342767/README.md)
+# 🧾 Ledger Pro — California Business Finance Tracker
 
-> Track expenses and income for freelancers and small businesses. Google Sheets sync, CSV export, receipt photos, 6 languages.
+> **Designed specifically for California freelancers, sole proprietors, single-member LLCs, and small businesses operating under California Franchise Tax Board (FTB) and IRS requirements.**
+>
+> Track expenses and income aligned to **Schedule C**, **CA Schedule CA (540)**, and **FTB Publication 984**. Google Sheets sync, receipt capture, mileage logging, home office tracking, CSV export, 6 languages.
 
-**Live App:** https://farboddavani-cmyk.github.io/expense-tracker/  
-**Play Store:** `com.farboddavani.ledger`  
+**Live App:** https://farboddavani-cmyk.github.io/expense-tracker/
+**Play Store:** `com.farboddavani.ledger`
 **Version:** 1.0.0
+
+---
+
+## ⚖️ California Tax Compliance — What This App Covers
+
+Ledger Pro is built around the specific requirements of the **California Franchise Tax Board (FTB)** and **IRS Schedule C** for sole proprietors, freelancers, and single-member LLCs doing business in California.
+
+### ✅ California-Specific Features
+
+| Feature | CA/FTB Requirement Addressed |
+|---|---|
+| **Schedule C Line Categories** | Every expense maps to a Schedule C line (Ln 8–30) per IRS & FTB Pub. 984 |
+| **Mileage Logging** | IRS/CA standard rate: $0.70/mi (2025), $0.725/mi (2026) — auto-calculates deduction |
+| **Home Office Tracker** | Simplified method: $5/sq ft up to 300 sq ft ($1,500 max) — CA FTB conforms to IRS |
+| **Meals (50% deductible)** | Separate category for 50%-deductible meals per CA Schedule CA (540) instructions |
+| **Tax Deductible Flag** | Per FTB Pub. 984 — marks ordinary & necessary business expenses |
+| **Quarterly Estimated Tax Banner** | CA FTB 540-ES schedule: **30% Q1 / 40% Q2 / 0% Q3 / 30% Q4** (differs from federal!) |
+| **CA Estimated Tax Estimator** | Estimates CA state tax at ~9.3% blended rate on net self-employment income |
+| **Receipt Photo Capture** | IRS/FTB require adequate records: date, amount, place, business purpose |
+| **Google Sheets Export** | Audit-ready records with Schedule C line references, mileage, home office sq ft |
+| **Invoice Status Tracking** | Tracks Paid/Unpaid/Overdue/Partial — required for CA income reporting |
+
+### 📋 Expense Categories (Schedule C Aligned)
+
+All categories map directly to IRS Schedule C / CA FTB equivalent lines:
+
+| App Category | Schedule C Line | CA FTB Notes |
+|---|---|---|
+| Advertising & Marketing | Line 8 | Fully deductible |
+| Car & Truck (Mileage) | Line 9 | $0.70/mi (2025) · $0.725/mi (2026) · mileage log required |
+| Commissions & Fees | Line 10 | 1099-NEC required if $600+ to individual |
+| Contract Labor (1099) | Line 11 | Issue 1099-NEC by Jan 31 for $600+ paid |
+| Depreciation & Section 179 | Line 13 | ⚠ CA does NOT conform to federal bonus depreciation (OBBBA 2025) |
+| Employee Benefits | Line 14 | Health insurance, retirement plans |
+| Home Office | Line 30 | Simplified: $5/sq ft, max 300 sq ft ($1,500) |
+| Insurance (Business) | Line 15 | Fully deductible business insurance only |
+| Interest (Business Loans) | Line 16 | CA does not cap at 30% ATI like federal |
+| Legal & Professional Services | Line 17 | CPA, attorney, consulting fees |
+| Meals & Entertainment (50%) | Line 24b | Only 50% deductible — CA follows federal limit |
+| Office Supplies & Postage | Line 18 | Fully deductible |
+| Rent & Lease | Line 20a/20b | Equipment or business property |
+| Repairs & Maintenance | Line 21 | Must be repair not improvement |
+| Software & Subscriptions | Line 27a | SaaS, apps, tools |
+| Taxes & Licenses | Line 23 | CA LLC Annual Fee ($800+), business licenses |
+| Travel (Away from Home) | Line 24a | Must be away from tax home overnight |
+| Utilities | Line 25 | Business-use percentage only |
+| Wages & Salaries | Line 26 | W-2 employees only |
+| Other Business Expense | Line 27a | Catch-all for ordinary & necessary |
+
+### 📅 California Quarterly Estimated Tax Schedule
+
+> ⚠️ **California's schedule differs from the federal IRS schedule — this is one of the most commonly missed CA requirements.**
+
+| Quarter | CA FTB Due Date | % of Annual Estimated Tax | Federal IRS |
+|---|---|---|---|
+| Q1 | April 15 | **30%** | 25% |
+| Q2 | June 15 | **40%** | 25% |
+| Q3 | September 15 | **0%** | 25% |
+| Q4 | January 15 | **30%** | 25% |
+
+Pay via **FTB Form 540-ES** at [ftb.ca.gov](https://www.ftb.ca.gov). Required if you expect to owe **$500 or more** in CA taxes (vs. $1,000 federal threshold).
+
+### 🏛️ Key California Tax Rules for Freelancers & LLCs
+
+**California Franchise Tax Board (FTB) Requirements:**
+- **LLC Annual Fee:** Minimum $800/year even with zero income (Form 3522)
+- **CA SDI Rate:** 1.2% of wages (up to ~$145,600 in 2025) — administered by EDD
+- **CA Income Tax Rates:** 1%–13.3% progressive (10 brackets) + 1% Mental Health Services Tax on income over $1M
+- **CA 2% Rule:** California still applies the 2% AGI floor on miscellaneous itemized deductions (unlike federal post-TCJA)
+- **Bonus Depreciation:** CA does NOT conform to the federal OBBBA 2025 bonus depreciation restoration — separate CA adjustment required on Schedule CA (540)
+- **Net Operating Loss Suspension:** CA has suspended NOL carryover deductions for tax years 2024–2026 (taxpayers with net business income under $1M are exempt)
+- **Home Office:** CA conforms to federal simplified method ($5/sq ft, max $1,500/year)
+- **Meals:** CA follows federal 50% deductibility limit for business meals
+- **Business Interest:** CA does NOT cap business interest deduction at 30% of ATI (unlike federal)
+- **1099-NEC:** Issue to any individual/unincorporated business paid $600+ for services by Jan 31
+
+**Self-Employment Tax (Federal, applies to CA filers):**
+- 15.3% on 92.35% of net earnings (12.4% Social Security + 2.9% Medicare)
+- Social Security wage base: $176,100 (2026)
+- Deduct half of SE tax on Form 1040 (reduces CA taxable income too)
+- QBI Deduction: Up to 20% of qualified business income (Section 199A) — federal only, CA does not conform
+
+### 📂 What Records to Keep (FTB Audit Requirements)
+
+Per **FTB Publication 984** and IRS requirements, keep for **7 years**:
+- ✅ Receipts for all business expenses (date, amount, vendor, business purpose)
+- ✅ Mileage log (date, destination, business purpose, miles — not reconstructed at year-end)
+- ✅ Bank and credit card statements
+- ✅ Invoices issued and received
+- ✅ Home office measurements and photos (for home office deduction)
+- ✅ 1099s received (reconcile with your own income records)
+- ✅ Contracts and client agreements
+- ✅ Quarterly estimated tax payment confirmations (FTB 540-ES)
 
 ---
 
@@ -15,17 +111,15 @@ ledger-pro/
 ├── index.html              ← Complete single-file PWA
 ├── manifest.json           ← PWA manifest
 ├── sw.js                   ← Service worker (offline caching)
+├── Code.gs                 ← Google Apps Script backend (14-col expense log)
 ├── icons/
-│   ├── icon-192.png        ← PWA icon (192×192)
-│   ├── icon-512.png        ← PWA icon (512×512)
-│   ├── icon-512-maskable.png ← Maskable icon for Android
-│   └── feature-graphic.png ← Play Store feature graphic (1024×500)
-├── PRIVACY_POLICY.md       ← Privacy policy
-├── PLAY_STORE_LISTING.md   ← Play Store copy & metadata
-├── README.md               ← This file
-└── .github/
-    └── workflows/
-        └── deploy.yml      ← GitHub Pages auto-deploy
+│   ├── icon-192.png
+│   ├── icon-512.png
+│   ├── icon-512-maskable.png
+│   └── feature-graphic.png
+├── PRIVACY_POLICY.md
+├── PLAY_STORE_LISTING.md
+└── README.md               ← This file
 ```
 
 ---
@@ -52,288 +146,36 @@ git push -u origin main
 
 ---
 
-## 📱 Package for Play Store (PWABuilder)
-
-1. Open https://www.pwabuilder.com
-2. Enter your GitHub Pages URL
-3. Click **Package for Stores → Android**
-4. Configure:
-   - Package ID: `com.farboddavani.ledger`
-   - App version: `1`
-   - Display mode: `standalone`
-5. Download the Android project zip
-
-### Add Custom Android Files
-
-After generating with PWABuilder, add the Kotlin files from `android/`:
-
-#### `TrialManager.kt`
-```kotlin
-package com.farboddavani.ledger
-
-import android.content.Context
-import android.content.SharedPreferences
-
-class TrialManager(context: Context) {
-    private val prefs: SharedPreferences = 
-        context.getSharedPreferences("ledger_prefs", Context.MODE_PRIVATE)
-    private val TRIAL_DAYS = 10L
-
-    fun initTrial() {
-        if (prefs.getLong("trial_start", 0L) == 0L) {
-            prefs.edit().putLong("trial_start", System.currentTimeMillis()).apply()
-        }
-    }
-
-    fun getDaysLeft(): Long {
-        val start = prefs.getLong("trial_start", System.currentTimeMillis())
-        val elapsed = (System.currentTimeMillis() - start) / 86400000L
-        return maxOf(0L, TRIAL_DAYS - elapsed)
-    }
-
-    fun isTrialActive() = getDaysLeft() > 0
-    fun isLicensed() = prefs.getBoolean("licensed", false)
-    fun hasAccess() = isLicensed() || isTrialActive()
-
-    fun setLicensed(licensed: Boolean) {
-        prefs.edit().putBoolean("licensed", licensed).apply()
-    }
-}
-```
-
-#### `BillingManager.kt`
-```kotlin
-package com.farboddavani.ledger
-
-import android.app.Activity
-import android.content.Context
-import com.android.billingclient.api.*
-
-class BillingManager(
-    private val context: Context,
-    private val onPurchaseSuccess: () -> Unit
-) : PurchasesUpdatedListener {
-    private val PRODUCT_ID = "ledger_unlock_full"
-    private lateinit var billingClient: BillingClient
-
-    fun init() {
-        billingClient = BillingClient.newBuilder(context)
-            .setListener(this)
-            .enablePendingPurchases()
-            .build()
-        billingClient.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(result: BillingResult) {
-                if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                    checkExistingPurchases()
-                }
-            }
-            override fun onBillingServiceDisconnected() {}
-        })
-    }
-
-    fun launchPurchase(activity: Activity) {
-        val productList = listOf(
-            QueryProductDetailsParams.Product.newBuilder()
-                .setProductId(PRODUCT_ID)
-                .setProductType(BillingClient.ProductType.INAPP)
-                .build()
-        )
-        billingClient.queryProductDetailsAsync(
-            QueryProductDetailsParams.newBuilder().setProductList(productList).build()
-        ) { _, productDetailsList ->
-            val product = productDetailsList.firstOrNull() ?: return@queryProductDetailsAsync
-            val flowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(listOf(
-                    BillingFlowParams.ProductDetailsParams.newBuilder()
-                        .setProductDetails(product)
-                        .build()
-                ))
-                .build()
-            billingClient.launchBillingFlow(activity, flowParams)
-        }
-    }
-
-    fun restorePurchases() = checkExistingPurchases()
-
-    private fun checkExistingPurchases() {
-        billingClient.queryPurchasesAsync(
-            QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.INAPP)
-                .build()
-        ) { _, purchases ->
-            purchases.forEach { purchase ->
-                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                    PRODUCT_ID in purchase.products) {
-                    if (!purchase.isAcknowledged) acknowledgePurchase(purchase)
-                    onPurchaseSuccess()
-                }
-            }
-        }
-    }
-
-    private fun acknowledgePurchase(purchase: Purchase) {
-        billingClient.acknowledgePurchase(
-            AcknowledgePurchaseParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
-        ) {}
-    }
-
-    override fun onPurchasesUpdated(result: BillingResult, purchases: List<Purchase>?) {
-        if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-            purchases?.forEach { purchase ->
-                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-                    if (!purchase.isAcknowledged) acknowledgePurchase(purchase)
-                    onPurchaseSuccess()
-                }
-            }
-        }
-    }
-}
-```
-
-#### `MainActivity.kt` additions
-```kotlin
-// In your PWABuilder-generated MainActivity, add:
-private lateinit var trialManager: TrialManager
-private lateinit var billingManager: BillingManager
-
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    
-    trialManager = TrialManager(this)
-    trialManager.initTrial()
-    
-    billingManager = BillingManager(this) {
-        // Called when purchase is verified
-        trialManager.setLicensed(true)
-        runOnUiThread {
-            webView.evaluateJavascript("window.onPurchaseSuccess && window.onPurchaseSuccess()", null)
-        }
-    }
-    billingManager.init()
-    
-    // Expose bridge to WebView
-    webView.addJavascriptInterface(object {
-        @android.webkit.JavascriptInterface
-        fun purchaseProduct(productId: String) {
-            runOnUiThread { billingManager.launchPurchase(this@MainActivity) }
-        }
-        @android.webkit.JavascriptInterface
-        fun restorePurchase() {
-            billingManager.restorePurchases()
-        }
-    }, "Android")
-}
-```
-
----
-
 ## 🔧 Google Apps Script Setup
 
-1. Open Google Sheets
-2. Go to **Extensions → Apps Script**
-3. Replace `Code.gs` with the contents below, then **Deploy → New deployment → Web App**
-   - Execute as: Me
-   - Who has access: Anyone
-4. Copy the deployment URL into Ledger Pro → Settings → Apps Script URL
+### First-time setup (new spreadsheet)
 
-### `Code.gs`
-```javascript
-const SHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
-const EXP_SHEET = 'Expense Log';
-const INC_SHEET = 'Income Log';
-const RECEIPTS_FOLDER = 'Expense Tracker Receipts';
-const INVOICES_FOLDER = 'Expense Tracker Invoices';
+1. Open Google Sheets → **Extensions → Apps Script**
+2. Select all in `Code.gs`, delete, paste the new `Code.gs`
+3. Click **Save** (💾)
+4. Run `setupSheets()` once from the editor to create tabs with CA-aligned headers
+5. **Deploy → New Deployment → Web App**
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+6. Copy the deployment URL → Ledger Pro app → Settings → Apps Script URL
 
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.openById(SHEET_ID);
-    
-    if (data.type === 'expense') {
-      const sheet = ss.getSheetByName(EXP_SHEET);
-      let receiptUrl = '';
-      if (data.receiptBase64) {
-        receiptUrl = uploadFile(data.receiptBase64, data.id + '_receipt', RECEIPTS_FOLDER);
-      }
-      sheet.appendRow([
-        data.date, data.vendor, data.desc, data.category,
-        data.amount, data.currency, data.method,
-        data.taxDeductible ? 'Yes' : 'No',
-        data.notes, receiptUrl, data.id
-      ]);
-    } else if (data.type === 'income') {
-      const sheet = ss.getSheetByName(INC_SHEET);
-      let invoiceUrl = '';
-      if (data.invoiceBase64) {
-        invoiceUrl = uploadFile(data.invoiceBase64, data.invoice + '_invoice', INVOICES_FOLDER);
-      }
-      sheet.appendRow([
-        data.date, data.client, data.invoice,
-        data.amount, data.currency, data.status,
-        data.notes, invoiceUrl, data.id
-      ]);
-    }
-    
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ error: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+### Updating existing deployment (keep your data)
 
-function doGet(e) {
-  try {
-    const type = e.parameter.type || 'expense';
-    const ss = SpreadsheetApp.openById(SHEET_ID);
-    const sheetName = type === 'income' ? INC_SHEET : EXP_SHEET;
-    const sheet = ss.getSheetByName(sheetName);
-    const rows = sheet.getDataRange().getValues();
-    
-    // Skip header rows (rows 1-3), data starts at row 4 (index 3)
-    const headers = rows[2] || [];
-    const data = rows.slice(3).map(row => {
-      const obj = {};
-      headers.forEach((h, i) => { obj[String(h).toLowerCase().replace(/\s+/g,'_')] = row[i]; });
-      obj.type = type;
-      return obj;
-    }).filter(r => r.date || r.vendor || r.client);
-    
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true, data }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ error: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+1. Paste new `Code.gs`, click Save
+2. **Deploy → Manage Deployments → Edit → New Version → Deploy**
+3. URL stays the same — data is untouched
 
-function uploadFile(base64Data, fileName, folderName) {
-  try {
-    // Strip data URL prefix
-    const match = base64Data.match(/^data:([^;]+);base64,(.+)$/);
-    if (!match) return '';
-    const mimeType = match[1];
-    const data = Utilities.base64Decode(match[2]);
-    const blob = Utilities.newBlob(data, mimeType, fileName);
-    
-    // Find or create folder
-    const folders = DriveApp.getFoldersByName(folderName);
-    const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
-    
-    const file = folder.createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return file.getUrl();
-  } catch(err) {
-    return '';
-  }
-}
-```
+### Spreadsheet Structure
+
+**Expense Log** (14 columns, Schedule C aligned):
+| Date | Vendor | Description | Category | Amount | Currency | Payment Method | Tax Deductible | Schedule C Line | Miles | Sq Ft | Notes | Receipt Link | ID |
+
+**Income Log** (9 columns):
+| Date | Client | Invoice # | Amount | Currency | Status | Notes | Invoice Link | ID |
+
+**Dashboard** — Live KPIs: Total Income, Net Position, Total Expenses, Invoices Paid, Unpaid Amount, Tax Deductible, Mileage Summary, CA compliance notes
+
+**Tax Summary** — Accountant-ready: deductible vs non-deductible by Schedule C category, income/expense net, mileage deduction calculation
 
 ---
 
@@ -374,10 +216,16 @@ function uploadFile(base64Data, fileName, folderName) {
 
 ---
 
+## ⚠️ Disclaimer
+
+Ledger Pro is a record-keeping and expense tracking tool. It is **not tax advice**. California tax law is complex and changes frequently. Always consult a licensed California CPA or tax professional (enrolled agent, FTB-registered) before filing. The quarterly tax estimates provided in the app are approximations only and do not account for your full tax situation.
+
+---
+
 ## 📄 License
 
 Copyright © 2025 Farbod Davani. All rights reserved.
 
 ---
 
-*Built with Ledger Pro v1.0.0*
+*Built with Ledger Pro v1.0.0 — Designed for California FTB & IRS Schedule C compliance*
