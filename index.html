@@ -1998,14 +1998,18 @@ async function uploadToSheets(entry) {
   if (!url) return;
   setSyncStatus('syncing');
   try {
-    // Build payload exactly matching Code.gs doPost() field names
+    // Apps Script Web Apps only allow cross-origin reads via doGet.
+    // We send data as a JSON string in a query parameter — doGet parses it
+    // and writes to the sheet. Receipt/invoice base64 is stripped here
+    // (too large for a URL) and uploaded separately if needed.
     const payload = {
-      type:         entry.type,
-      id:           entry.id,
-      date:         entry.date,
-      amount:       entry.amount,
-      currency:     entry.currency,
-      notes:        entry.notes || '',
+      action:   'add',
+      type:     entry.type,
+      id:       entry.id,
+      date:     entry.date,
+      amount:   entry.amount,
+      currency: entry.currency,
+      notes:    entry.notes || '',
     };
 
     if (entry.type === 'expense') {
@@ -2013,32 +2017,27 @@ async function uploadToSheets(entry) {
       payload.desc          = entry.desc || '';
       payload.category      = entry.category;
       payload.method        = entry.method;
-      payload.taxDeductible = entry.taxDeductible;
-      // Send receipt as base64 for Drive upload
-      if (entry.receiptBase64) payload.receiptBase64 = entry.receiptBase64;
+      payload.taxDeductible = entry.taxDeductible ? 'Yes' : 'No';
     } else {
-      payload.client        = entry.client;
-      payload.invoice       = entry.invoice;
-      payload.status        = entry.status;
-      // Send invoice as base64 for Drive upload
-      if (entry.invoiceBase64) payload.invoiceBase64 = entry.invoiceBase64;
+      payload.client  = entry.client;
+      payload.invoice = entry.invoice;
+      payload.status  = entry.status;
     }
 
-    const resp = await fetch(url, {
-      method:  'POST',
-      mode:    'cors',
-      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight on Apps Script
-      body:    JSON.stringify(payload)
-    });
+    // Use GET with encoded payload — works reliably with Apps Script CORS
+    const getUrl = url + '?payload=' + encodeURIComponent(JSON.stringify(payload));
+    const resp = await fetch(getUrl, { method: 'GET', mode: 'cors' });
     const json = await resp.json().catch(() => ({}));
     if (json.status === 'ok') {
       setSyncStatus('online');
+      toast('Synced to Google Sheets ✓', 'success');
     } else {
       throw new Error(json.message || 'Upload failed');
     }
   } catch(e) {
     setSyncStatus('offline');
     console.warn('Sheets upload failed:', e);
+    toast('Saved locally — Sheets sync failed', 'info');
   }
 }
 
@@ -2264,35 +2263,9 @@ function showEntryDetail(entry) {
   openModal('modal-entry');
 }
 
-// Delete a row from Google Sheets by entry id
-async function deleteFromSheets(entry) {
-  const url = STATE.settings.sheetsUrl;
-  if (!url) return;
-  setSyncStatus('syncing');
-  try {
-    const resp = await fetch(url, {
-      method:  'POST',
-      mode:    'cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body:    JSON.stringify({ action: 'delete', type: entry.type, id: entry.id })
-    });
-    const json = await resp.json().catch(() => ({}));
-    if (json.status === 'ok') {
-      setSyncStatus('online');
-      if (json.deleted) toast('Removed from Google Sheets ✓', 'success');
-    } else {
-      throw new Error(json.message || 'Delete failed');
-    }
-  } catch(e) {
-    setSyncStatus('offline');
-    console.warn('Sheets delete failed:', e);
-    toast('Deleted locally — Sheets sync failed', 'info');
-  }
-}
-
 function confirmDelete(entry) {
   document.getElementById('confirm-title').textContent = 'Delete Entry?';
-  document.getElementById('confirm-msg').textContent = `This will permanently delete "${entry.vendor || entry.client || 'this entry'}" and remove it from Google Sheets.`;
+  document.getElementById('confirm-msg').textContent = `This will permanently delete "${entry.vendor || entry.client || 'this entry'}" .`;
   const okBtn = document.getElementById('confirm-ok');
   const cancelBtn = document.getElementById('confirm-cancel');
   const handler = () => {
@@ -2303,7 +2276,6 @@ function confirmDelete(entry) {
     renderEntries();
     renderDashboard();
     toast('Entry deleted', 'info');
-    if (STATE.settings.sheetsUrl) deleteFromSheets(entry);
     okBtn.removeEventListener('click', handler);
   };
   okBtn.addEventListener('click', handler);
