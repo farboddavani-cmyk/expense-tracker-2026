@@ -787,7 +787,7 @@ img{max-width:100%;display:block}
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span id="sync-status" style="font-size:12px;color:var(--muted);display:flex;align-items:center"><span class="sync-dot online" id="sync-dot"></span><span id="sync-text">Synced</span></span>
-          <button class="icon-btn" id="refresh-btn" title="Refresh from Google Sheets" style="font-size:16px">🔄</button>
+          <button class="icon-btn" id="refresh-btn" title="Refresh from Google Sheets" style="font-size:13px;font-family:var(--font-display);font-weight:600;color:var(--gold);width:auto;padding:0 10px">↻ Sync</button>
           <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
         </div>
       </div>
@@ -1636,7 +1636,7 @@ const STATE = {
   settings: {
     lang: 'en',
     currency: 'USD',
-    sheetsUrl: 'https://script.google.com/macros/s/AKfycbxGKrWUnGelPMwo1_9KZ5Jsear61IHbgkx5sThBrIyQZJLQyHLTDRJo7TBFkuWt-GG4/exec',
+    sheetsUrl: 'https://script.google.com/macros/s/AKfycbyDVvRVkRY6TICxyjNYoN7jWAOZTRlRNXIol6N0dJv5JcdNZOWx2I8qh_eO3qJqb7-f/exec',
     onboardingDone: false,
     licensed: false,
     trialStart: null,
@@ -2179,7 +2179,7 @@ async function uploadToSheets(entry) {
   } catch(e) {
     setSyncStatus('offline');
     console.warn('Sheets upload failed:', e);
-    toast('Saved locally — Sheets sync failed', 'info');
+    toast('Saved locally — Sheets error: ' + e.message, 'info');
   }
 }
 
@@ -2200,24 +2200,37 @@ async function syncFromSheets() {
   const url = sheetsUrl();
   if (!url) { toast('No Sheets URL configured', 'error'); return; }
   setSyncStatus('syncing');
-  document.getElementById('sync-sheets-status').textContent = '⏳';
+  const statusEl = document.getElementById('sync-sheets-status');
+  if (statusEl) statusEl.textContent = '⏳';
   try {
-    const [expData, incData] = await Promise.all([
-      sheetsGet({ action: 'read', type: 'expense' }),
-      sheetsGet({ action: 'read', type: 'income'  }),
+    // Fetch both in parallel — each is a simple GET request
+    const [expResp, incResp] = await Promise.all([
+      fetch(sheetsUrl() + '?action=read&type=expense', { method: 'GET', mode: 'cors' }),
+      fetch(sheetsUrl() + '?action=read&type=income',  { method: 'GET', mode: 'cors' }),
     ]);
-    if (expData && Array.isArray(expData.rows)) STATE.expenses = expData.rows;
-    if (incData && Array.isArray(incData.rows))  STATE.income   = incData.rows;
+    const expData = await expResp.json();
+    const incData = await incResp.json();
+    let expCount = 0, incCount = 0;
+    if (expData && Array.isArray(expData.rows)) {
+      // Filter out blank rows (empty id and vendor)
+      STATE.expenses = expData.rows.filter(r => r.vendor || r.id);
+      expCount = STATE.expenses.length;
+    }
+    if (incData && Array.isArray(incData.rows)) {
+      STATE.income = incData.rows.filter(r => r.client || r.id);
+      incCount = STATE.income.length;
+    }
     save();
     setSyncStatus('online');
-    document.getElementById('sync-sheets-status').textContent = '✅';
-    toast('Synced from Google Sheets ✓', 'success');
+    if (statusEl) statusEl.textContent = '✅';
+    toast('Synced ✓ — ' + expCount + ' expenses, ' + incCount + ' income', 'success');
     renderDashboard();
     renderEntries();
   } catch(e) {
     setSyncStatus('offline');
-    document.getElementById('sync-sheets-status').textContent = '✗';
-    toast('Sync failed — check URL and connection', 'error');
+    if (statusEl) statusEl.textContent = '✗';
+    console.error('Sync error:', e);
+    toast('Sync failed: ' + e.message, 'error');
   }
 }
 
@@ -2569,6 +2582,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
 document.getElementById('settings-btn').addEventListener('click', () => showView('settings'));
 document.getElementById('refresh-btn').addEventListener('click', () => {
   if (!STATE.settings.sheetsUrl) { toast('No Sheets URL configured — go to Settings', 'error'); return; }
+  console.log('Syncing from:', STATE.settings.sheetsUrl);
   syncFromSheets();
 });
 document.getElementById('back-from-settings').addEventListener('click', () => showView('dashboard'));
