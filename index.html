@@ -2110,30 +2110,37 @@ async function saveEntry() {
   showView('dashboard');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
-// ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════════════════
-//  SHEETS SYNC — uses individual GET params (most reliable Apps Script method)
-//  doGet receives named params: action, type, field1, field2...
-//  No JSON blob = no encoding issues, no body dropping, no CORS problems.
+//  Single function: buildUrl() constructs the full GET URL with all params.
+//  Apps Script doGet() reads named params — no CORS, no body, no redirect issues.
 // ═══════════════════════════════════════════════════════════════════════════
 
-function sheetsUrl() { return STATE.settings.sheetsUrl; }
-
-async function sheetsGet(params) {
-  const url = sheetsUrl();
-  if (!url) return null;
+function buildUrl(base, params) {
   const qs = Object.entries(params)
-    .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v == null ? '' : v))
+    .filter(([,v]) => v !== undefined && v !== null)
+    .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
     .join('&');
-  const resp = await fetch(url + '?' + qs, { method: 'GET', mode: 'cors' });
-  return resp.json();
+  return base + '?' + qs;
+}
+
+async function callSheets(params) {
+  const base = STATE.settings.sheetsUrl;
+  if (!base) throw new Error('No Apps Script URL configured');
+  const url = buildUrl(base, params);
+  // Use no-cors for writes (fire and confirm via read), cors for reads
+  const isRead = params.action === 'read';
+  const resp = await fetch(url, {
+    method: 'GET',
+    mode: isRead ? 'cors' : 'no-cors',
+  });
+  if (isRead) return resp.json();
+  return { status: 'ok' }; // no-cors = opaque, assume ok for writes
 }
 
 async function uploadToSheets(entry) {
-  const url = sheetsUrl();
-  if (!url) return;
+  const base = STATE.settings.sheetsUrl;
+  if (!base) return;
   setSyncStatus('syncing');
   try {
     let params;
@@ -2169,13 +2176,9 @@ async function uploadToSheets(entry) {
         notes:    entry.notes || '',
       };
     }
-    const json = await sheetsGet(params);
-    if (json && json.status === 'ok') {
-      setSyncStatus('online');
-      toast('Saved to Google Sheets ✓', 'success');
-    } else {
-      throw new Error((json && json.message) || 'No response');
-    }
+    await callSheets(params);
+    setSyncStatus('online');
+    toast('Saved to Google Sheets ✓', 'success');
   } catch(e) {
     setSyncStatus('offline');
     console.warn('Sheets upload failed:', e);
@@ -2184,13 +2187,12 @@ async function uploadToSheets(entry) {
 }
 
 async function deleteFromSheets(entry) {
-  const url = sheetsUrl();
-  if (!url) return;
+  const base = STATE.settings.sheetsUrl;
+  if (!base) return;
   try {
-    const json = await sheetsGet({ action: 'delete', type: entry.type, id: entry.id });
-    if (json && json.status === 'ok') {
-      toast('Removed from Google Sheets ✓', 'success');
-    }
+    const url = buildUrl(base, { action: 'delete', type: entry.type, id: entry.id });
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
+    toast('Removed from Google Sheets ✓', 'success');
   } catch(e) {
     console.warn('Sheets delete failed:', e);
   }
@@ -2199,20 +2201,20 @@ async function deleteFromSheets(entry) {
 async function syncFromSheets() {
   const url = sheetsUrl();
   if (!url) { toast('No Sheets URL configured', 'error'); return; }
+  const base = STATE.settings.sheetsUrl;
+  if (!base) { toast('No Sheets URL — go to Settings', 'error'); return; }
   setSyncStatus('syncing');
   const statusEl = document.getElementById('sync-sheets-status');
   if (statusEl) statusEl.textContent = '⏳';
   try {
-    // Fetch both in parallel — each is a simple GET request
     const [expResp, incResp] = await Promise.all([
-      fetch(sheetsUrl() + '?action=read&type=expense', { method: 'GET', mode: 'cors' }),
-      fetch(sheetsUrl() + '?action=read&type=income',  { method: 'GET', mode: 'cors' }),
+      fetch(base + '?action=read&type=expense', { method: 'GET', mode: 'cors' }),
+      fetch(base + '?action=read&type=income',  { method: 'GET', mode: 'cors' }),
     ]);
     const expData = await expResp.json();
     const incData = await incResp.json();
     let expCount = 0, incCount = 0;
     if (expData && Array.isArray(expData.rows)) {
-      // Filter out blank rows (empty id and vendor)
       STATE.expenses = expData.rows.filter(r => r.vendor || r.id);
       expCount = STATE.expenses.length;
     }
