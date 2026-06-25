@@ -1998,20 +1998,47 @@ async function uploadToSheets(entry) {
   if (!url) return;
   setSyncStatus('syncing');
   try {
-    const payload = { type: entry.type, ...entry };
-    // Strip large base64 from payload, only send metadata
-    delete payload.receiptBase64;
-    delete payload.invoiceBase64;
+    // Build payload exactly matching Code.gs doPost() field names
+    const payload = {
+      type:         entry.type,
+      id:           entry.id,
+      date:         entry.date,
+      amount:       entry.amount,
+      currency:     entry.currency,
+      notes:        entry.notes || '',
+    };
+
+    if (entry.type === 'expense') {
+      payload.vendor        = entry.vendor;
+      payload.desc          = entry.desc || '';
+      payload.category      = entry.category;
+      payload.method        = entry.method;
+      payload.taxDeductible = entry.taxDeductible;
+      // Send receipt as base64 for Drive upload
+      if (entry.receiptBase64) payload.receiptBase64 = entry.receiptBase64;
+    } else {
+      payload.client        = entry.client;
+      payload.invoice       = entry.invoice;
+      payload.status        = entry.status;
+      // Send invoice as base64 for Drive upload
+      if (entry.invoiceBase64) payload.invoiceBase64 = entry.invoiceBase64;
+    }
 
     const resp = await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      method:  'POST',
+      mode:    'cors',
+      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight on Apps Script
+      body:    JSON.stringify(payload)
     });
-    setSyncStatus('online');
+    const json = await resp.json().catch(() => ({}));
+    if (json.status === 'ok') {
+      setSyncStatus('online');
+    } else {
+      throw new Error(json.message || 'Upload failed');
+    }
   } catch(e) {
     setSyncStatus('offline');
+    console.warn('Sheets upload failed:', e);
   }
 }
 
@@ -2023,12 +2050,13 @@ async function syncFromSheets() {
   try {
     const [expResp, incResp] = await Promise.all([
       fetch(url + '?type=expense', { mode: 'cors' }),
-      fetch(url + '?type=income', { mode: 'cors' })
+      fetch(url + '?type=income',  { mode: 'cors' })
     ]);
     const expData = await expResp.json();
     const incData = await incResp.json();
-    if (expData.data) STATE.expenses = expData.data;
-    if (incData.data) STATE.income = incData.data;
+    // Code.gs returns { status:'ok', rows:[...] }
+    if (Array.isArray(expData.rows)) STATE.expenses = expData.rows;
+    if (Array.isArray(incData.rows)) STATE.income   = incData.rows;
     save();
     setSyncStatus('online');
     document.getElementById('sync-sheets-status').textContent = '✅';
@@ -2236,21 +2264,29 @@ function showEntryDetail(entry) {
   openModal('modal-entry');
 }
 
-// Delete a row from Google Sheets by entry id and type
+// Delete a row from Google Sheets by entry id
 async function deleteFromSheets(entry) {
   const url = STATE.settings.sheetsUrl;
   if (!url) return;
   setSyncStatus('syncing');
   try {
-    await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', type: entry.type, id: entry.id })
+    const resp = await fetch(url, {
+      method:  'POST',
+      mode:    'cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify({ action: 'delete', type: entry.type, id: entry.id })
     });
-    setSyncStatus('online');
+    const json = await resp.json().catch(() => ({}));
+    if (json.status === 'ok') {
+      setSyncStatus('online');
+      if (json.deleted) toast('Removed from Google Sheets ✓', 'success');
+    } else {
+      throw new Error(json.message || 'Delete failed');
+    }
   } catch(e) {
     setSyncStatus('offline');
+    console.warn('Sheets delete failed:', e);
+    toast('Deleted locally — Sheets sync failed', 'info');
   }
 }
 
